@@ -154,13 +154,13 @@ struct Node* removemin(struct Node* p)
     return getBalance(p);
 }
 
-struct Node* remove(struct Node* root, int k) // удаление ключа k из дерева
+struct Node* remove_node(struct Node* root, int k) // удаление ключа k из дерева
 {
     if (!root) return 0;
     if (k < root->key)
-        root->left = remove(root->left, k);
+        root->left = remove_node(root->left, k);
     else if (k > root->key)
-        root->right = remove(root->right, k);
+        root->right = remove_node(root->right, k);
     else //  k == p->key 
     {
         struct Node* q = root->left;
@@ -195,6 +195,12 @@ int main()
     preOrder(root);
 
     printf("\n\n");
+
+    printf("Введите номер ключа для удаления: ");
+    int k;
+    scanf("%d", &k);
+    remove_node(root, k);
+    preOrder(root);
     getchar();
     return 0;
 }
