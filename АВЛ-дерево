@@ -128,10 +128,51 @@ void preOrder(struct Node* root)
 {
     if (root != NULL)
     {
-        printf("%d ", root->key);
+        int output = getBalance(root);
+        printf("%d = %d\n", root->key, output);
         preOrder(root->left);
         preOrder(root->right);
     }
+}
+
+/* Удаление ключа */
+
+/* поиск узла с минимальным ключом в дереве p */
+
+struct Node* findmin(struct Node* p)  
+{
+    return p->left ? findmin(p->left) : p;
+}
+
+/* удаление узла с минимальным ключом из дерева p */
+
+struct Node* removemin(struct Node* p) 
+{
+    if (p->left == 0)
+        return p->right;
+    p->left = removemin(p->left);
+    return getBalance(p);
+}
+
+struct Node* remove(struct Node* root, int k) // удаление ключа k из дерева
+{
+    if (!root) return 0;
+    if (k < root->key)
+        root->left = remove(root->left, k);
+    else if (k > root->key)
+        root->right = remove(root->right, k);
+    else //  k == p->key 
+    {
+        struct Node* q = root->left;
+        struct Node* r = root->right;
+        free (root);
+        if (!r) return q;
+        struct Node* min = findmin(r);
+        min->right = removemin(r);
+        min->left = q;
+        return getBalance(min);
+    }
+    return getBalance(root);
 }
 
 
@@ -154,5 +195,6 @@ int main()
     preOrder(root);
 
     printf("\n\n");
+    getchar();
     return 0;
 }
