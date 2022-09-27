@@ -4,7 +4,7 @@
 
 using namespace std;
 
-struct node // структура для представления узлов дерева
+struct node // Г±ГІГ°ГіГЄГІГіГ°Г  Г¤Г«Гї ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГҐГ­ГЁГї ГіГ§Г«Г®Гў Г¤ГҐГ°ГҐГўГ 
 {
 	int key;
 	unsigned char height;
@@ -30,7 +30,7 @@ void fixheight(node* p)
 	p->height = (hl > hr ? hl : hr) + 1;
 }
 
-node* rotateright(node* p) // правый поворот вокруг p
+node* rotateright(node* p) // ГЇГ°Г ГўГ»Г© ГЇГ®ГўГ®Г°Г®ГІ ГўГ®ГЄГ°ГіГЈ p
 {
 	node* q = p->left;
 	p->left = q->right;
@@ -40,7 +40,7 @@ node* rotateright(node* p) // правый поворот вокруг p
 	return q;
 }
 
-node* rotateleft(node* q) // левый поворот вокруг q
+node* rotateleft(node* q) // Г«ГҐГўГ»Г© ГЇГ®ГўГ®Г°Г®ГІ ГўГ®ГЄГ°ГіГЈ q
 {
 	node* p = q->right;
 	q->right = p->left;
@@ -50,7 +50,7 @@ node* rotateleft(node* q) // левый поворот вокруг q
 	return p;
 }
 
-node* balance(node* p) // балансировка узла p
+node* balance(node* p) // ГЎГ Г«Г Г­Г±ГЁГ°Г®ГўГЄГ  ГіГ§Г«Г  p
 {
 	fixheight(p);
 	if (bfactor(p) == 2)
@@ -65,10 +65,10 @@ node* balance(node* p) // балансировка узла p
 			p->left = rotateleft(p->left);
 		return rotateright(p);
 	}
-	return p; // балансировка не нужна
+	return p; // ГЎГ Г«Г Г­Г±ГЁГ°Г®ГўГЄГ  Г­ГҐ Г­ГіГ¦Г­Г 
 }
 
-node* insert(node* p, int k) // вставка ключа k в дерево с корнем p
+node* insert(node* p, int k) // ГўГ±ГІГ ГўГЄГ  ГЄГ«ГѕГ·Г  k Гў Г¤ГҐГ°ГҐГўГ® Г± ГЄГ®Г°Г­ГҐГ¬ p
 {
 	if (!p) return new node(k);
 	if (k < p->key)
@@ -78,12 +78,12 @@ node* insert(node* p, int k) // вставка ключа k в дерево с корнем p
 	return balance(p);
 }
 
-node* findmin(node* p) // поиск узла с минимальным ключом в дереве p 
+node* findmin(node* p) // ГЇГ®ГЁГ±ГЄ ГіГ§Г«Г  Г± Г¬ГЁГ­ГЁГ¬Г Г«ГјГ­Г»Г¬ ГЄГ«ГѕГ·Г®Г¬ Гў Г¤ГҐГ°ГҐГўГҐ p 
 {
 	return p->left ? findmin(p->left) : p;
 }
 
-node* removemin(node* p) // удаление узла с минимальным ключом из дерева p
+node* removemin(node* p) // ГіГ¤Г Г«ГҐГ­ГЁГҐ ГіГ§Г«Г  Г± Г¬ГЁГ­ГЁГ¬Г Г«ГјГ­Г»Г¬ ГЄГ«ГѕГ·Г®Г¬ ГЁГ§ Г¤ГҐГ°ГҐГўГ  p
 {
 	if (p->left == 0)
 		return p->right;
@@ -91,7 +91,7 @@ node* removemin(node* p) // удаление узла с минимальным ключом из дерева p
 	return balance(p);
 }
 
-node* remove(node* p, int k) // удаление ключа k из дерева p
+node* remove(node* p, int k) // ГіГ¤Г Г«ГҐГ­ГЁГҐ ГЄГ«ГѕГ·Г  k ГЁГ§ Г¤ГҐГ°ГҐГўГ  p
 {
 	if (!p) return 0;
 	if (k < p->key)
@@ -117,7 +117,7 @@ void preOrder(node* root)
 	if (root != NULL)
 	{
 		int output = height(root);
-		cout << "Ключ дерева: " << root->key << " Высота дерева: " << output << endl;
+		cout << "ГЉГ«ГѕГ· Г¤ГҐГ°ГҐГўГ : " << root->key << " Г‚Г»Г±Г®ГІГ  Г¤ГҐГ°ГҐГўГ : " << output << endl;
 		//printf("%d = %d\n", root->key, output);
 		preOrder(root->left);
 		preOrder(root->right);
@@ -128,7 +128,7 @@ int main()
 {
 	int x, count;
 	setlocale(LC_ALL, "RU");
-	cout << "Введите количество узлов: " << endl;
+	cout << "Г‚ГўГҐГ¤ГЁГІГҐ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГіГ§Г«Г®Гў: " << endl;
 	cin >> count;
 	if (count == 0)
 	{
@@ -136,22 +136,22 @@ int main()
 	}
 	else
 	{
-		cout << "Введите ключ корня дерева: " << endl;
+		cout << "Г‚ГўГҐГ¤ГЁГІГҐ ГЄГ«ГѕГ· ГЄГ®Г°Г­Гї Г¤ГҐГ°ГҐГўГ : " << endl;
 		cin >> x;
 		node* root = new node(x);
 		count--;
 		while (count)
 		{
-			cout << "Введите ключ: " << endl;
+			cout << "Г‚ГўГҐГ¤ГЁГІГҐ ГЄГ«ГѕГ·: " << endl;
 			cin >> x;
 			root = insert(root, x);
 			count--;
 		}
 		preOrder(root);
-		cout << "Какой ключ удалить?" << endl;
+		cout << "ГЉГ ГЄГ®Г© ГЄГ«ГѕГ· ГіГ¤Г Г«ГЁГІГј?" << endl;
 		cin >> x;
 		remove(root, x);
-		if (root->key < 0) cout << "Вы удалили корень дерева." << endl;
+		if (root->key < 0) cout << "Г‚Г» ГіГ¤Г Г«ГЁГ«ГЁ ГЄГ®Г°ГҐГ­Гј Г¤ГҐГ°ГҐГўГ ." << endl;
 		else preOrder(root);
 	}
 }
