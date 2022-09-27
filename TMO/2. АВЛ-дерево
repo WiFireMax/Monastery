@@ -151,7 +151,7 @@ int main()
 		cout << "Какой ключ удалить?" << endl;
 		cin >> x;
 		remove(root, x);
-		if (root->key < 0) cout << "Вы удалили корень дерева." << endl;
+		if (root->key > 100000 || root->key < -100000) cout << "Вы удалили корень дерева." << endl;
 		else preOrder(root);
 	}
 }
