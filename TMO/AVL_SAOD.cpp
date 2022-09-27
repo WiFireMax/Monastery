@@ -4,7 +4,7 @@
 
 using namespace std;
 
-struct node // ñòðóêòóðà äëÿ ïðåäñòàâëåíèÿ óçëîâ äåðåâà
+struct node // структура для представления узлов дерева
 {
 	int key;
 	unsigned char height;
@@ -30,7 +30,7 @@ void fixheight(node* p)
 	p->height = (hl > hr ? hl : hr) + 1;
 }
 
-node* rotateright(node* p) // ïðàâûé ïîâîðîò âîêðóã p
+node* rotateright(node* p) // правый поворот вокруг p
 {
 	node* q = p->left;
 	p->left = q->right;
@@ -40,7 +40,7 @@ node* rotateright(node* p) // ïðàâûé ïîâîðîò âîêðóã p
 	return q;
 }
 
-node* rotateleft(node* q) // ëåâûé ïîâîðîò âîêðóã q
+node* rotateleft(node* q) // левый поворот вокруг q
 {
 	node* p = q->right;
 	q->right = p->left;
@@ -50,7 +50,7 @@ node* rotateleft(node* q) // ëåâûé ïîâîðîò âîêðóã q
 	return p;
 }
 
-node* balance(node* p) // áàëàíñèðîâêà óçëà p
+node* balance(node* p) // балансировка узла p
 {
 	fixheight(p);
 	if (bfactor(p) == 2)
@@ -65,10 +65,10 @@ node* balance(node* p) // áàëàíñèðîâêà óçëà p
 			p->left = rotateleft(p->left);
 		return rotateright(p);
 	}
-	return p; // áàëàíñèðîâêà íå íóæíà
+	return p; // балансировка не нужна
 }
 
-node* insert(node* p, int k) // âñòàâêà êëþ÷à k â äåðåâî ñ êîðíåì p
+node* insert(node* p, int k) // вставка ключа k в дерево с корнем p
 {
 	if (!p) return new node(k);
 	if (k < p->key)
@@ -78,12 +78,12 @@ node* insert(node* p, int k) // âñòàâêà êëþ÷à k â äåðåâî ñ �
 	return balance(p);
 }
 
-node* findmin(node* p) // ïîèñê óçëà ñ ìèíèìàëüíûì êëþ÷îì â äåðåâå p 
+node* findmin(node* p) // поиск узла с минимальным ключом в дереве p 
 {
 	return p->left ? findmin(p->left) : p;
 }
 
-node* removemin(node* p) // óäàëåíèå óçëà ñ ìèíèìàëüíûì êëþ÷îì èç äåðåâà p
+node* removemin(node* p) // удаление узла с минимальным ключом из дерева p
 {
 	if (p->left == 0)
 		return p->right;
@@ -91,7 +91,7 @@ node* removemin(node* p) // óäàëåíèå óçëà ñ ìèíèìàëüíûì 
 	return balance(p);
 }
 
-node* remove(node* p, int k) // óäàëåíèå êëþ÷à k èç äåðåâà p
+node* remove(node* p, int k) // удаление ключа k из дерева p
 {
 	if (!p) return 0;
 	if (k < p->key)
@@ -117,7 +117,7 @@ void preOrder(node* root)
 	if (root != NULL)
 	{
 		int output = height(root);
-		cout << "Êëþ÷ äåðåâà: " << root->key << " Âûñîòà äåðåâà: " << output << endl;
+		cout << "Ключ дерева: " << root->key << " Высота дерева: " << output << endl;
 		//printf("%d = %d\n", root->key, output);
 		preOrder(root->left);
 		preOrder(root->right);
@@ -128,7 +128,7 @@ int main()
 {
 	int x, count;
 	setlocale(LC_ALL, "RU");
-	cout << "Ââåäèòå êîëè÷åñòâî óçëîâ: " << endl;
+	cout << "Введите количество узлов: " << endl;
 	cin >> count;
 	if (count == 0)
 	{
@@ -136,22 +136,22 @@ int main()
 	}
 	else
 	{
-		cout << "Ââåäèòå êëþ÷ êîðíÿ äåðåâà: " << endl;
+		cout << "Введите ключ корня дерева: " << endl;
 		cin >> x;
 		node* root = new node(x);
 		count--;
 		while (count)
 		{
-			cout << "Ââåäèòå êëþ÷: " << endl;
+			cout << "Введите ключ: " << endl;
 			cin >> x;
 			root = insert(root, x);
 			count--;
 		}
 		preOrder(root);
-		cout << "Êàêîé êëþ÷ óäàëèòü?" << endl;
+		cout << "Какой ключ удалить?" << endl;
 		cin >> x;
 		remove(root, x);
-		if (root->key < 0) cout << "Âû óäàëèëè êîðåíü äåðåâà." << endl;
+		if (root->key < 0) cout << "Вы удалили корень дерева." << endl;
 		else preOrder(root);
 	}
 }
