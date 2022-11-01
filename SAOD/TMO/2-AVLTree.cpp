@@ -1,157 +1,223 @@
 #include <iostream>
-#include <cstdlib>
-#include <locale>
-
-using namespace std;
-
-struct node // структура для представления узлов дерева
-{
+//Создание узла
+typedef struct AVL {
 	int key;
-	unsigned char height;
-	node* left;
-	node* right;
-	node(int k) { key = k; left = right = nullptr; height = 1; }
-};
-
-unsigned char height(node* p)
+	int height;
+	struct AVL* lchild;
+	struct AVL* rchild;
+}AVL;
+//Высота по умолчанию равна 0
+AVL* New_Node(int key, AVL* lchild, AVL* rchild, int height = 0)
 {
-	return p ? p->height : 0;
+	AVL* p_avl = new AVL;
+	p_avl->key = key;
+	p_avl->lchild = lchild;
+	p_avl->rchild = rchild;
+	p_avl->height = height;
+	return p_avl;
 }
 
-int bfactor(node* p)
+int getHeight(AVL* node)
 {
-	return height(p->right) - height(p->left);
+	return (node == NULL) ? -1 : node->height;
 }
 
-void fixheight(node* p)
+int max(int a, int b)
 {
-	unsigned char hl = height(p->left);
-	unsigned char hr = height(p->right);
-	p->height = (hl > hr ? hl : hr) + 1;
+	return a > b ? a : b;
 }
 
-node* rotateright(node* p) // правый поворот вокруг p
+/* RR(Y rotates to the right):
+	    k2                   k1
+	   /  \                 /  \
+	  k1   Z     ==>       X   k2
+	 / \                      /  \
+	X   Y                    Y    Z
+*/
+/*
+ Return which the root pointer(at a higher level) should point to
+ */
+AVL* RR_Rotate(AVL* k2)
 {
-	node* q = p->left;
-	p->left = q->right;
-	q->right = p;
-	fixheight(p);
-	fixheight(q);
-	return q;
+	AVL* k1 = k2->lchild;
+	k2->lchild = k1->rchild;
+	k1->rchild = k2;
+	k2->height = max(getHeight(k2->lchild), getHeight(k2->rchild)) + 1;
+	k1->height = max(getHeight(k1->lchild), k2->height) + 1;
+	return k1;
 }
 
-node* rotateleft(node* q) // левый поворот вокруг q
+/* LL(Y rotates to the left):
+		k2                       k1
+	   /  \                     /  \
+	  X    k1         ==>      k2   Z
+		  /  \                /  \
+		 Y    Z              X    Y
+ */
+AVL* LL_Rotate(AVL* k2)
 {
-	node* p = q->right;
-	q->right = p->left;
-	p->left = q;
-	fixheight(q);
-	fixheight(p);
-	return p;
+	AVL* k1 = k2->rchild;
+	k2->rchild = k1->lchild;
+	k1->lchild = k2;
+	k2->height = max(getHeight(k2->lchild), getHeight(k2->rchild)) + 1;
+	k1->height = max(getHeight(k1->rchild), k2->height) + 1;
+	return k1;
 }
 
-node* balance(node* p) // балансировка узла p
+
+
+/* LR(B rotates to the left, then C rotates to the right):
+	  k3                         k3                       k2
+	 /  \                       /  \                     /  \
+	k1   D                     k2   D                   k1   k3
+   /  \         ==>           /  \        ==>          / \   / \
+  A    k2                    k1   C                   A  B  C   D
+	  /  \                  /  \
+	 B    C                A    B
+*/
+/*
+ Return which the root pointer should point to
+ */
+AVL* LR_Rotate(AVL* k3)
 {
-	fixheight(p);
-	if (bfactor(p) == 2)
+	k3->lchild = LL_Rotate(k3->lchild);
+	return RR_Rotate(k3);
+}
+
+
+/* RL(D rotates to the right, then C rotates to the left):
+	   k3                         k3                          k2
+	  /  \                       /  \                        /  \
+	 A    k1                    A    k2                     k3   k1
+		 /  \       ==>             /  \         ==>       /  \  / \
+		k2   B                     C    k1                A   C D   B
+	   /  \                            /  \
+	  C    D                          D    B
+ */
+AVL* RL_Rotate(AVL* k3)
+{
+	k3->rchild = RR_Rotate(k3->rchild);
+	return LL_Rotate(k3);
+}
+
+/* return which the root pointer(at an outer/higher level) should point to,
+   the root_node of AVL tree may change frequently during delete/insert,
+   so the Root pointer should point to the REAL root node.
+ */
+AVL* Insert(AVL* root, int key)
+{
+	if (root == NULL)
+		return (root = New_Node(key, NULL, NULL));
+	else if (key < root->key)
+		root->lchild = Insert(root->lchild, key);
+	else //key >= root->key
+		root->rchild = Insert(root->rchild, key);
+
+	root->height = max(getHeight(root->lchild), getHeight(root->rchild)) + 1;
+	if (getHeight(root->lchild) - getHeight(root->rchild) == 2)
 	{
-		if (bfactor(p->right) < 0)
-			p->right = rotateright(p->right);
-		return rotateleft(p);
+		if (key < root->lchild->key)
+			root = RR_Rotate(root);
+		else
+			root = LR_Rotate(root);
 	}
-	if (bfactor(p) == -2)
+	else if (getHeight(root->rchild) - getHeight(root->lchild) == 2)
 	{
-		if (bfactor(p->left) > 0)
-			p->left = rotateleft(p->left);
-		return rotateright(p);
+		if (key < root->rchild->key)
+			root = RL_Rotate(root);
+		else
+			root = LL_Rotate(root);
 	}
-	return p; // балансировка не нужна
+	return root;
 }
 
-node* insert(node* p, int k) // вставка ключа k в дерево с корнем p
-{
-	if (!p) return new node(k);
-	if (k < p->key)
-		p->left = insert(p->left, k);
-	else
-		p->right = insert(p->right, k);
-	return balance(p);
-}
 
-node* findmin(node* p) // поиск узла с минимальным ключом в дереве p 
+/* return which the root pointer(at an outer/higher level) should pointer to,
+   cause the root_node of AVL tree may change frequently during delete/insert,
+   so the Root pointer should point to the REAL root node.
+ */
+AVL* Delete(AVL* root, int key)
 {
-	return p->left ? findmin(p->left) : p;
-}
-
-node* removemin(node* p) // удаление узла с минимальным ключом из дерева p
-{
-	if (p->left == 0)
-		return p->right;
-	p->left = removemin(p->left);
-	return balance(p);
-}
-
-node* remove(node* p, int k) // удаление ключа k из дерева p
-{
-	if (!p) return 0;
-	if (k < p->key)
-		p->left = remove(p->left, k);
-	else if (k > p->key)
-		p->right = remove(p->right, k);
-	else //  k == p->key 
+	if (!root)
+		return NULL;
+	if (key == root->key)
 	{
-		node* q = p->left;
-		node* r = p->right;
-		delete p;
-		if (!r) return q;
-		node* min = findmin(r);
-		min->right = removemin(r);
-		min->left = q;
-		return balance(min);
-	}
-	return balance(p);
-}
-
-void preOrder(node* root)
-{
-	if (root != NULL)
-	{
-		int output = height(root);
-		cout << "Ключ дерева: " << root->key << " Высота дерева: " << output << endl;
-		//printf("%d = %d\n", root->key, output);
-		preOrder(root->left);
-		preOrder(root->right);
-	}
-}
-
-int main() 
-{
-	int x, count;
-	setlocale(LC_ALL, "RU");
-	cout << "Введите количество узлов: " << endl;
-	cin >> count;
-	if (count == 0)
-	{
-		cout << "Error";
-	}
-	else
-	{
-		cout << "Введите ключ корня дерева: " << endl;
-		cin >> x;
-		node* root = new node(x);
-		count--;
-		while (count)
+		if (root->rchild == NULL)
 		{
-			cout << "Введите ключ: " << endl;
-			cin >> x;
-			root = insert(root, x);
-			count--;
+			AVL* temp = root;
+			root = root->lchild;
+			delete(temp);
+			return root;
 		}
-		preOrder(root);
-		cout << "Какой ключ удалить?" << endl;
-		cin >> x;
-		remove(root, x);
-		if (root->key > 100000 || root->key < -100000) cout << "Вы удалили корень дерева." << endl;
-		else preOrder(root);
+		else
+		{
+			AVL* temp = root->rchild;
+			while (temp->lchild)
+				temp = temp->lchild;
+			/* replace the value */
+			root->key = temp->key;
+			/* Delete the node (successor node) that should be really deleted */
+			root->rchild = Delete(root->rchild, temp->key);
+		}
 	}
+	else if (key < root->key)
+		root->lchild = Delete(root->lchild, key);
+	else
+		root->rchild = Delete(root->rchild, key);
+
+	root->height = max(getHeight(root->lchild), getHeight(root->rchild)) + 1;
+	if (getHeight(root->rchild) - getHeight(root->lchild) == 2)
+	{
+		if (getHeight(root->rchild->rchild) >= getHeight(root->rchild->lchild))
+			root = LL_Rotate(root);
+		else
+			root = RL_Rotate(root);
+	}
+	else if (getHeight(root->lchild) - getHeight(root->rchild) == 2)
+	{
+		if (getHeight(root->lchild->lchild) >= getHeight(root->lchild->rchild))
+			root = RR_Rotate(root);
+		else
+			root = LR_Rotate(root);
+	}
+	return root;
+}
+
+void InOrder(AVL* root)
+{
+	if (root)
+	{
+		InOrder(root->lchild);
+		std::cout << "key: " << root->key << " height: " << root->height;
+		if (root->lchild)
+			std::cout << " left child: " << root->lchild->key;
+		if (root->rchild)
+			std::cout << " right child: " << root->rchild->key;
+		std::cout << std::endl;
+		InOrder(root->rchild);
+	}
+}
+
+int main()
+{
+	AVL* root = NULL;
+	int vector[] = { 3, 2, 1, 10 };
+	const int length = sizeof(vector) / sizeof(int);
+	for (int i = 0; i < length; i++)
+		root = Insert(root, vector[i]);
+	std::cout << "\nInOrder: " << std::endl;
+	InOrder(root);
+	int input;
+	while (root)
+	{
+		std::cout << "\nplease input value you want to delete: ";
+		std::cin >> input;
+		//scanf("%u", &input);
+		root = Delete(root, input);
+		std::cout << "\nAfter delete " << input << ":" << std::endl;
+		//printf("\nAfter delete %u:\n", input);
+		InOrder(root);
+	}
+	std::cout << std::endl;
+	return 0;
 }
