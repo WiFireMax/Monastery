@@ -11,7 +11,7 @@ struct Node
     struct Node* parent;
     enum type color;
 };
-//Î÷åðåäü äëÿ ðàáîòû ñ óçëàìè ïîýëåìåíòíî
+//Очередь для работы с узлами поэлементно
 struct Queue
 {
     struct Node* data;
@@ -20,12 +20,12 @@ struct Queue
 
 struct Queue* front = NULL;
 struct Queue* tail = NULL;
-//Ôóíêöèÿ äëÿ ñîïîñòàâëåíèÿ áèòà öâåòà (ñì. enum) è ñàìîãî öâåòà
+//Функция для сопоставления бита цвета (см. enum) и самого цвета
 string what_color(struct Node* root) {
     if (root->color == BLACK) return "BLACK";
     if (root->color == RED) return "RED";
 }
-//Óñòàíîâêà óêàçàòåëÿ íà ïåðâûé ýëåìåíò äåðåâà (î÷åðåäè)
+//Установка указателя на первый элемент дерева (очереди)
 struct Node* pfront()
 {
     struct Node* data;
@@ -41,7 +41,7 @@ int isempty()
     else
         return 0;
 }
-//Óäàëåíèå î÷åðåäè
+//Удаление очереди
 void dequeue()
 {
     if (isempty())
@@ -52,7 +52,7 @@ void dequeue()
     free(temp);
 }
 
-//Âñòàâêà â î÷åðåäü
+//Вставка в очередь
 void enqueue(struct Node* data)
 {
     struct Queue* temp = new Queue;
@@ -68,7 +68,7 @@ void enqueue(struct Node* data)
     tail->next = temp;
     tail = temp;
 }
-//Âûâîä äåðåâà â ïîðÿäêå óáûâàíèÿ âûñîò
+//Вывод дерева в порядке убывания высот
 void levelorder(struct Node* root)
 {
     if (root == NULL)
@@ -140,7 +140,7 @@ void RightRotate(struct Node** Tree, struct Node** x)
     (*x)->parent = y;
 
 }
-//Ïåðåêðàøèâàíèå äåðåâà ïîñëå âñòàâêè
+//Перекрашивание дерева после вставки
 void RB_insert_fixup(struct Node** Tree, struct Node** z)
 {
     struct Node* grandparent = NULL;
@@ -210,7 +210,7 @@ void RB_insert_fixup(struct Node** Tree, struct Node** z)
     (*Tree)->color = BLACK;
 
 }
-//Âñòàâêà
+//Вставка
 struct Node* RB_insert(struct Node* Tree, int data)
 {
     struct Node* z = new Node;
@@ -247,7 +247,7 @@ struct Node* RB_insert(struct Node* Tree, int data)
 
     return Tree;
 }
-//Íåóïîðÿäî÷åííûé âûâîä
+//Неупорядоченный вывод
 void preorder(struct Node* root)
 {
     if (root)
@@ -269,7 +269,7 @@ struct Node* Tree_minimum(struct Node* node)
 
     return node;
 }
-//Ïåðåêðàøèâàíèå äåðåâà ïîñëå óäàëåíèÿ óçëà
+//Перекрашивание дерева после удаления узла
 void RB_delete_fixup(struct Node** Tree, struct Node** x)
 {
     while ((*x) != *Tree && (*x)->color == BLACK)
@@ -349,7 +349,7 @@ void RB_delete_fixup(struct Node** Tree, struct Node** x)
     (*x)->color = BLACK;
 
 }
-//"Ïåðåñàæèâàíèå" ëèñòêà
+//"Пересаживание" листка
 void RB_transplat(struct Node** Tree, struct Node** u, struct Node** v)
 {
     if ((*u)->parent == NULL)
@@ -443,7 +443,7 @@ int main()
     struct Node* x = BST_search(RBT, w);
     RBT = RB_delete(RBT, x);
 
-    front = NULL; tail = NULL; //Óäàëåíèå ñòàðîé î÷åðåäè
+    front = NULL; tail = NULL; //Удаление старой очереди
 
     cout << "\nLevel order: " << endl;
     levelorder(RBT);
