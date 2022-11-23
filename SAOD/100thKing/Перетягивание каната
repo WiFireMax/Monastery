@@ -1,33 +1,41 @@
 #include <iostream>
 #include <math.h>
 using namespace std;
-
-// function that tries every possible solution by calling itself recursively
-void TOWUtil(int* arr, int n, bool* curr_elements, int no_of_selected_elements,
+/*
+arr - основной массив со значениями
+n - размер массивов
+curr_elements - логический массив, в котором с помощью 0 и 1 идет разделение массива arr
+no_of_selected_elements - кол-во 1 в curr_elements для прерывания функции
+soln - логический массив, в который записывается лучшее решение
+min_diff - разность полусуммы arr от суммы curr_sum
+sum - сумма массива arr
+curr_sum - сумма элементов со значением 1 в curr_elements
+curr_position - текущий индекс в массиве
+*/
+void func(int* arr, int n, bool* curr_elements, int no_of_selected_elements,
     bool* soln, int* min_diff, int sum, int curr_sum, int curr_position)
 {
-    // checks whether the it is going out of bound
+    // Проверка выхода за границу
     if (curr_position == n)
         return;
 
-    // checks that the numbers of elements left are not less than the
-    // number of elements required to form the solution
+    // Если кол-во оставшихся эл-ов меньше половины
     if ((n / 2 - no_of_selected_elements) > (n - curr_position))
         return;
 
-    // consider the cases when current element is not included in the solution
-    TOWUtil(arr, n, curr_elements, no_of_selected_elements,
+    // Если текущий элемент не добавлен
+    func(arr, n, curr_elements, no_of_selected_elements,
         soln, min_diff, sum, curr_sum, curr_position + 1);
 
-    // add the current element to the solution
+    // Добавить элемент в массив 
     no_of_selected_elements++;
     curr_sum = curr_sum + arr[curr_position];
     curr_elements[curr_position] = true;
 
-    // checks if a solution is formed
+    // Если кол-во элементов достаточно
     if (no_of_selected_elements == n / 2)
     {
-        // checks if the solution formed is better than the best solution so far
+        // Проверка на схожесть сумм
         if (abs(sum / 2 - curr_sum) < *min_diff)
         {
             *min_diff = abs(sum / 2 - curr_sum);
@@ -37,23 +45,20 @@ void TOWUtil(int* arr, int n, bool* curr_elements, int no_of_selected_elements,
     }
     else
     {
-        // consider the cases where current element is included in the solution
-        TOWUtil(arr, n, curr_elements, no_of_selected_elements, soln,
+        // Если текущий элемент добавлен
+        func(arr, n, curr_elements, no_of_selected_elements, soln,
             min_diff, sum, curr_sum, curr_position + 1);
     }
 
-    // removes current element before returning to the caller of this function
+    // Убирает current element 
     curr_elements[curr_position] = false;
 }
 
-// main function that generate an arr
+// Создание вспомогательных массивов
 void tugOfWar(int* arr, int n)
 {
-    // the boolean array that contains the inclusion and exclusion of an element
-    // in current set. The number excluded automatically form the other set
     bool* curr_elements = new bool[n];
 
-    // The inclusion/exclusion array for final solution
     bool* soln = new bool[n];
 
     int min_diff = INT_MAX;
@@ -65,11 +70,10 @@ void tugOfWar(int* arr, int n)
         curr_elements[i] = soln[i] = false;
     }
 
-    // Find the solution using recursive function TOWUtil()
-    TOWUtil(arr, n, curr_elements, 0, soln, &min_diff, sum, 0, 0);
+    func(arr, n, curr_elements, 0, soln, &min_diff, sum, 0, 0);
 
-    // Print the solution
-    cout << "The first subset is: ";
+    // Вывод
+    cout << "Первое множество: ";
     int new_sum=0;
     for (int i = 0; i < n; i++)
     {
@@ -80,7 +84,7 @@ void tugOfWar(int* arr, int n)
         }
     }
     cout << "= " << new_sum;
-    cout << "\nThe second subset is: ";
+    cout << "\nВторое множество: ";
     new_sum = 0;
     for (int i = 0; i < n; i++)
     {
@@ -93,7 +97,6 @@ void tugOfWar(int* arr, int n)
     cout << "= " << new_sum;
 }
 
-// Driver program to test above functions
 int main()
 {
     setlocale(LC_ALL, "rus");
@@ -103,18 +106,16 @@ int main()
 
         cout << "Введите размер массива кратный двум: ";
         cin >> n;
-      /*  if (n % 2 != 0)
+        if (n % 2 != 0)
         {
             cout << "Ошибка при вводе" << endl;
         }
         else
         {
             break;
-        }*/
-        break;
+        }
     }
     int *arr = new int[n];
-    setlocale(LC_ALL, "en");
     srand(time(NULL));
     for (int i = 0; i < n; i++)
     {
