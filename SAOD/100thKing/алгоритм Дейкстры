@@ -1,18 +1,16 @@
-//#include "stdafx.h"
-#include <tuple>
 #include <time.h>
-#include <initializer_list>
 #include <iostream>
 using namespace std;
 const int X = 0;
 //алгоритм Дейкстры
 void func(int GR[20][20], int st)
 {
-	int distance[20], count, index, i, u, m = st + 1;
+	int distance[20], count, index, i, u, m = st+1;
 	bool visited[20];
 	for (i = 0; i < 20; i++)
 	{
-		distance[i] = INT_MAX; visited[i] = false;
+		distance[i] = INT_MAX;
+		visited[i] = false;
 	}
 	distance[st] = 0;
 	for (count = 0; count < 20 - 1; count++)
@@ -21,7 +19,8 @@ void func(int GR[20][20], int st)
 		for (i = 0; i < 20; i++)
 			if (!visited[i] && distance[i] <= min)
 			{
-				min = distance[i]; index = i;
+				min = distance[i];
+				index = i;
 			}
 		u = index;
 		visited[u] = true;
@@ -40,7 +39,9 @@ void func(int GR[20][20], int st)
 void main()
 {
 	setlocale(LC_ALL, "Rus");
-	int start, GR[20][20] = {
+
+	int start;
+	int	GR[20][20] = {
 	{X,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,X,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,X,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -61,7 +62,9 @@ void main()
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,X,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,X,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,X} };
+
 	srand(time(NULL));
+
 	for (int i = 0; i < 20; i++)
 	{
 		for (int k = 0; k < 20; k++)
@@ -74,6 +77,7 @@ void main()
 			}
 		}
 	}
+
 	for (int i = 0; i < 20; i++)
 	{
 		for (int k = 0; k < 20; k++)
@@ -82,8 +86,9 @@ void main()
 		}
 		cout << endl;
 	}
+
 	cout << endl;
-	cout << "Начальная вершина >> "; cin >> start;
-	func(GR, start - 1);
-	//system("pause>>void");
+	cout << "Начальная вершина >> "; 
+	cin >> start;
+	func(GR, start-1);
 }
