@@ -54,7 +54,7 @@ int main() {
             display(root, 0);
             break;
         default:
-            cout << "Wrong choice\n";
+            cout << "Неправильный выбор\n";
             break;
         }
     }
