@@ -35,15 +35,16 @@ double salesman(double** matrix, int size)
 	do {
 		if (d[0] != 0)
 		{
-			break;
+			continue;
 		}
 
 		for (int k = 0; k < (size - 1); k++)
 		{
+			//cout << d[k] << ' ';
 			if (matrix[d[k]][d[k + 1]] == 0)
 			{
 				summ = INT_MAX;
-				break;
+				continue;
 			}
 			summ += matrix[d[k]][d[k + 1]];
 		}
@@ -56,19 +57,17 @@ double salesman(double** matrix, int size)
 				way[z] = d[z];
 			}
 		}
-
-
-		
+		summ = 0;
 		reverse(d.begin() + size, d.end());
 	} while (next_permutation(d.begin(), d.end()));
 
 	cout << endl;
-	//cout << "Way: ";
-	//for (int i = 0; i < size; i++)
-	//{
-	//	cout << way[i]+1 << ' ';
-	//}
-	//cout << endl << endl;
+	cout << "Way: ";
+	for (int i = 0; i < size; i++)
+	{
+		cout << way[i]+1 << ' ';
+	}
+	cout << endl << endl;
 	cout << "Cost: " << best;
 	cout << endl << endl;
 	return 0;
